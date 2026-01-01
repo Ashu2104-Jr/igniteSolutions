@@ -1,8 +1,12 @@
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from .models import Book, Author, Language, Subject, Bookshelf, Format, BookAuthors, BookLanguages, BookSubjects, BookBookshelves
 
+@csrf_exempt
+@require_http_methods(["GET"])
 def books_api(request):
     book_ids = request.GET.get('book_ids', '').split(',') if request.GET.get('book_ids') else []
     languages = request.GET.get('language', '').split(',') if request.GET.get('language') else []
@@ -100,7 +104,13 @@ def books_api(request):
             'download_links': download_links
         })
     
-    return JsonResponse({
+    response = JsonResponse({
         'count': paginator.count,
         'results': books_data
     })
+    
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    response['Access-Control-Allow-Headers'] = 'Content-Type'
+    
+    return response
