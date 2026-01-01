@@ -1,19 +1,22 @@
 # Project Gutenberg Books API
 
-A Django REST API for querying books from Project Gutenberg database.
+A Django REST API with React frontend for querying books from Project Gutenberg database.
 
 ## Features
 
 - **Complete filtering support**: Book IDs, language, MIME type, topic, author, title
-- **Multiple values per filter**: `language=en,fr` or `topic=child,fiction`
+- **Multiple values per filter**: Select multiple languages, topics, authors, etc.
 - **Case-insensitive partial matching**: For topics, authors, and titles
 - **Pagination**: Configurable page size (default: 25 books per page)
 - **Sorting**: By popularity (download count, descending)
+- **Interactive UI**: React frontend with filter tags and remove buttons
 - **JSON response format**: RESTful API design
 
-## Setup
+## Quick Start
 
-1. **Install dependencies**:
+### Backend Setup
+
+1. **Install Python dependencies**:
 ```bash
 pip install -r requirements.txt
 ```
@@ -32,11 +35,49 @@ DATABASES = {
 }
 ```
 
-3. **Start the server**:
+3. **Start Django server**:
 ```bash
 cd root
 python manage.py runserver
 ```
+
+### Frontend Setup
+
+1. **Install Node.js dependencies**:
+```bash
+cd frontend
+npm install
+```
+
+2. **Start React development server**:
+```bash
+npm start
+```
+
+### Access the Application
+
+- **React Frontend**: http://localhost:3000
+- **Django API**: http://localhost:8000/api/books/
+
+## UI Features
+
+### Filter System
+- **Multiple Selection**: Choose multiple languages, topics, authors
+- **Filter Tags**: Selected filters appear as removable blue tags
+- **Smart Dropdowns**: Hide already selected options
+- **Text Inputs**: Add Book IDs and titles by pressing Enter
+- **Remove Individual**: Click X on any tag to remove specific filter
+
+### Book Display
+- **Scrollable List**: Window-height container with scroll
+- **Book Cards**: Title, authors, languages, subjects, download links
+- **Responsive Design**: Works on desktop and mobile
+
+### Pagination
+- **Next/Previous**: Navigate through pages
+- **Page Info**: Shows current page and total pages
+- **Page Size**: Choose 10, 25, 50, or 100 books per page
+- **Total Count**: Display total matching books
 
 ## API Documentation
 
@@ -80,10 +121,6 @@ Query books with optional filters. Returns paginated results.
         {
           "mime_type": "text/plain",
           "url": "https://www.gutenberg.org/files/1/1-0.txt"
-        },
-        {
-          "mime_type": "text/html",
-          "url": "https://www.gutenberg.org/files/1/1-h/1-h.htm"
         }
       ]
     }
@@ -91,41 +128,17 @@ Query books with optional filters. Returns paginated results.
 }
 ```
 
-### Example Requests
+### Example API Requests
 
 ```bash
-# Get all books (first 25)
-curl "http://localhost:8000/api/books/"
-
-# Filter by language
-curl "http://localhost:8000/api/books/?language=en"
-
 # Multiple languages
 curl "http://localhost:8000/api/books/?language=en,fr"
-
-# Filter by topic (searches subjects and bookshelves)
-curl "http://localhost:8000/api/books/?topic=child"
 
 # Multiple topics
 curl "http://localhost:8000/api/books/?topic=child,fiction"
 
-# Filter by author (case-insensitive partial match)
-curl "http://localhost:8000/api/books/?author=carroll"
-
-# Filter by title (case-insensitive partial match)
-curl "http://localhost:8000/api/books/?title=alice"
-
-# Filter by MIME type
-curl "http://localhost:8000/api/books/?mime_type=text/plain"
-
-# Filter by specific book IDs
-curl "http://localhost:8000/api/books/?book_ids=1,2,3"
-
-# Combined filters with pagination
-curl "http://localhost:8000/api/books/?language=en&topic=fiction&page_size=10&page=2"
-
-# Complex query
-curl "http://localhost:8000/api/books/?language=en&author=dickens&topic=fiction&mime_type=text/plain"
+# Combined filters
+curl "http://localhost:8000/api/books/?language=en&author=dickens&topic=fiction"
 ```
 
 ## Database Schema
@@ -154,7 +167,7 @@ python manage.py test books --keepdb --verbosity=2
 
 ```
 projectforignite/
-├── root/
+├── root/                  # Django backend
 │   ├── books/
 │   │   ├── models.py      # Database models
 │   │   ├── views.py       # API endpoints
@@ -164,23 +177,39 @@ projectforignite/
 │   │   ├── settings.py    # Django configuration
 │   │   └── urls.py        # Main URL routing
 │   └── manage.py          # Django management
-├── requirements.txt       # Dependencies
+├── frontend/              # React frontend
+│   ├── src/
+│   │   ├── App.js         # Main React component
+│   │   ├── App.css        # Styles
+│   │   └── index.js       # React entry point
+│   ├── public/
+│   │   └── index.html     # HTML template
+│   └── package.json       # Node.js dependencies
+├── requirements.txt       # Python dependencies
 ├── README.md             # This file
 └── .gitignore           # Git ignore rules
 ```
 
 ## Dependencies
 
+### Backend
 - Django >= 4.2.0
 - psycopg2-binary >= 2.9.0
 - gunicorn >= 20.1.0 (for production)
+
+### Frontend
+- React ^18.2.0
+- axios ^1.6.0
+- react-scripts 5.0.1
 
 ## Key Features Implemented
 
 ✅ **Multiple filter criteria** - All filters can be combined  
 ✅ **Multiple values per filter** - Comma-separated values supported  
 ✅ **Case-insensitive partial matching** - For topics, authors, titles  
+✅ **Interactive filter tags** - Visual tags with remove buttons  
 ✅ **Pagination** - 25 books per page by default, configurable  
 ✅ **Popularity sorting** - Books ordered by download count  
 ✅ **Complete book information** - Authors, languages, subjects, bookshelves, download links  
+✅ **Responsive UI** - Works on desktop and mobile  
 ✅ **RESTful JSON API** - Clean, consistent response format
